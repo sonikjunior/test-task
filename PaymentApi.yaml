@@ -7,15 +7,15 @@ info:
 servers:
   - url: /
 tags:
-  - name: API
-    description: Внешние API
-  - name: DB API
+  - name: Gateway
+    description: Внешний API
+  - name: DB Service
     description: API для микросервиса, работающего с БД
-  - name: Activator API
+  - name: Activator
     description: API микросервиса для активации продуктов/услуг
-  - name: Money increase service API
+  - name: Money increase service
     description: API микросервиса для списания со счета клиента/поставщика
-  - name: Money decrease service API
+  - name: Money decrease service
     description: API микросервиса для пополнения счета клиента/поставщика
 security:
   - bearerAuth: []
@@ -25,7 +25,7 @@ paths:
       summary: Оплата продукта/услуги
       operationId: pay
       tags:
-        - API
+        - Gateway
       requestBody:
         content:
           application/json:
@@ -49,7 +49,7 @@ paths:
       summary: Отмена продукта/услуги
       operationId: cancel
       tags:
-        - API
+        - Gateway
       requestBody:
         content:
           application/json:
@@ -73,7 +73,7 @@ paths:
       summary: Внесение средств на счет клиента
       operationId: deposit
       tags:
-        - API
+        - Gateway
       requestBody:
         content:
           application/json:
@@ -97,7 +97,7 @@ paths:
       summary: Получение списка покупок по продукту
       operationId: findProductsByName
       tags:
-        - API
+        - Gateway
       parameters:
         - in: query
           name: product
@@ -120,6 +120,154 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         500:
           $ref: '#/components/responses/InternalServerError'
+  /clients/{clientId}:
+    patch:
+      summary: Изменение остатка на счету клиента
+      operationId: clientsMoneyUpdate
+      tags:
+        - DB Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/ClientsUpdateParameters'
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /suppliers/{supplierId}:
+    patch:
+      summary: Изменение остатка на счету поставщика
+      operationId: suppliersMoneyUpdate
+      tags:
+        - DB Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/SuppliersUpdateParameters'
+      parameters:
+        - $ref: '#/components/parameters/supplierId'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /activate:
+    post:
+      summary: Активация продукта/услуги
+      operationId: activate
+      tags:
+        - Activator
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/ActivateParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /deactivate:
+    patch:
+      summary: Отключение продукта/услуги
+      operationId: deactivate
+      tags:
+        - Activator
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/DeactivateParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /increase-money:
+    patch:
+      summary: Списывает деньги со счета клиента/поставщика
+      operationId: increase
+      tags:
+        - Money increase service
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/IncreasingParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /decrease-money:
+    patch:
+      summary: Пополняет счет клиента/поставщика
+      operationId: decrease
+      tags:
+        - Money decrease service
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/DeacreasingParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:
@@ -127,6 +275,23 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  parameters:
+    clientId:
+      name: clientId
+      description: Идентификатор клиента
+      required: true
+      in: path
+      schema:
+        type: integer
+        format: int64
+    supplierId:
+      name: supplierId
+      description: Идентификатор поставщика
+      required: true
+      in: path
+      schema:
+        type: integer
+        format: int64
   responses:
     BadRequest:
       description: Bad Request
@@ -198,3 +363,90 @@ components:
           description: Кол-во покупок продукта/услуги
           type: number
           format: int32
+    ClientsUpdateParameters:
+      required:
+        - sum
+        - operationType
+      properties:
+        sum:
+          description: Стоимость продукта/услуги
+          type: number
+          format: int32
+        operationType:
+          $ref: '#/components/schemas/OperationType'
+    SuppliersUpdateParameters:
+      required:
+        - sum
+        - operationType
+      properties:
+        sum:
+          description: Стоимость продукта/услуги
+          type: number
+          format: int32
+        operationType:
+          $ref: '#/components/schemas/OperationType'
+    OperationType:
+      description: >-
+        Тип операции: пополнение или списание
+      type: string
+      enum:
+        - credit # Списание
+        - debit # Пополнение
+    ActivateParameters:
+      required:
+        - clientId
+        - productId
+        - supplierId
+      properties:
+        clientId:
+          description: Идентификатор клиента
+          type: number
+        productId:
+          description: Идентификатор продукта/услуги
+          type: number
+          format: int64
+        supplierId:
+          description: Идентификатор поставщика
+          type: number
+          format: int64
+    DeactivateParameters:
+      required:
+        - clientId
+        - productId
+      properties:
+        clientId:
+          description: Идентификатор клиента
+          type: number
+        productId:
+          description: Идентификатор продукта/услуги
+          type: number
+          format: int64
+    IncreasingParameters:
+      required:
+        - userType
+        - sum
+      properties:
+        userType:
+          $ref: '#/components/schemas/UserType'
+        sum:
+          description: Сумма для списания
+          type: number
+          format: int32
+    DeacreasingParameters:
+      required:
+        - userType
+        - sum
+      properties:
+        userType:
+          $ref: '#/components/schemas/UserType'
+        sum:
+          description: Сумма для списания
+          type: number
+          format: int32
+    UserType:
+      description: >-
+        Тип пользователя системы: клиент или поставщик
+      type: string
+      enum:
+        - client # Списание
+        - debit # Пополнение

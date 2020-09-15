@@ -16,6 +16,8 @@
 
     <properties>
         <version.openapi-generator>4.2.3</version.openapi-generator>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
     <dependencies>
@@ -44,7 +46,7 @@
                 <version>${version.openapi-generator}</version>
                 <executions>
                     <execution>
-                        <id>price-changes</id>
+                        <id>payment-service</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
