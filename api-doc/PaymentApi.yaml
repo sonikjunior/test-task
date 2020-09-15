@@ -9,7 +9,7 @@ servers:
 tags:
   - name: Gateway
     description: Внешний API
-  - name: DB Service
+  - name: DB
     description: API для микросервиса, работающего с БД
   - name: Activator
     description: API микросервиса для активации продуктов/услуг
@@ -125,7 +125,7 @@ paths:
       summary: Изменение остатка на счету клиента
       operationId: clientsMoneyUpdate
       tags:
-        - DB Service
+        - DB
       requestBody:
         content:
           application/json:
@@ -151,7 +151,7 @@ paths:
       summary: Изменение остатка на счету поставщика
       operationId: suppliersMoneyUpdate
       tags:
-        - DB Service
+        - DB
       requestBody:
         content:
           application/json:
@@ -369,7 +369,7 @@ components:
         - operationType
       properties:
         sum:
-          description: Стоимость продукта/услуги
+          description: Стоимость продукта/услуги (сумма для списания/пополнения)
           type: number
           format: int32
         operationType:

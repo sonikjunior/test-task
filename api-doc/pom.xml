@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--    <parent>-->
+<!--        <artifactId>api-doc</artifactId>-->
+<!--        <groupId>ru.khasbatov</groupId>-->
+<!--        <version>1.0-SNAPSHOT</version>-->
+<!--    </parent>-->
+
+    <groupId>ru.khasbatov</groupId>
+    <artifactId>api-doc</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>api-doc</name>
+    <description>DB service for payment microservices</description>
+
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <properties>
+        <version.openapi-generator>4.2.3</version.openapi-generator>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator</artifactId>
+            <version>4.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.3.3.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${version.openapi-generator}</version>
+                <executions>
+                    <execution>
+                        <id>payment-service</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>
+                                ${basedir}/PaymentApi.yaml
+                            </inputSpec>
+                            <generatorName>spring</generatorName>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <apiPackage>ru.khasbatov.doc.controllers</apiPackage>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <modelPackage>ru.khasbatov.doc.dto</modelPackage>
+                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            <configOptions>
+                                <useTags>true</useTags>
+                                <library>spring-mvc</library>
+                                <interfaceOnly>true</interfaceOnly>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -12,64 +12,7 @@
     <modules>
         <module>db-service</module>
         <module>products-activator</module>
+        <module>api-doc</module>
     </modules>
-
-    <properties>
-        <version.openapi-generator>4.2.3</version.openapi-generator>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator</artifactId>
-            <version>4.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.3.3.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${version.openapi-generator}</version>
-                <executions>
-                    <execution>
-                        <id>payment-service</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                ${basedir}/PaymentApi.yaml
-                            </inputSpec>
-                            <generatorName>spring</generatorName>
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <apiPackage>ru.khasbatov.doc.controllers</apiPackage>
-                            <generateModelDocumentation>false</generateModelDocumentation>
-                            <modelPackage>ru.khasbatov.doc.dto</modelPackage>
-                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            <configOptions>
-                                <useTags>true</useTags>
-                                <library>spring-mvc</library>
-                                <interfaceOnly>true</interfaceOnly>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
