@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  title: Payment Service
+  description: >
+    `Design First`
+  version: 1.0.0
+servers:
+  - url: /
+tags:
+  - name: API
+    description: Внешние API
+  - name: DB API
+    description: API для микросервиса, работающего с БД
+  - name: Activator API
+    description: API микросервиса для активации продуктов/услуг
+  - name: Money increase service API
+    description: API микросервиса для списания со счета клиента/поставщика
+  - name: Money decrease service API
+    description: API микросервиса для пополнения счета клиента/поставщика
+security:
+  - bearerAuth: []
+paths:
+  /pay:
+    post:
+      summary: Оплата продукта/услуги
+      operationId: pay
+      tags:
+        - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /cancel:
+    post:
+      summary: Отмена продукта/услуги
+      operationId: cancel
+      tags:
+        - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelingParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /deposit:
+    post:
+      summary: Внесение средств на счет клиента
+      operationId: deposit
+      tags:
+        - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositParameters'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /info:
+    get:
+      summary: Получение списка покупок по продукту
+      operationId: findProductsByName
+      tags:
+        - API
+      parameters:
+        - in: query
+          name: product
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductContracts'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/UnprocessableEntity'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Bad Request
+    Unauthorized:
+      description: Unauthorized
+    Forbidden:
+      description: Forbidden
+    NotFound:
+      description: Not Found
+    UnprocessableEntity:
+      description: Unprocessable Entity
+    InternalServerError:
+      description: Internal Server Error
+  schemas:
+    PaymentParameters:
+      required:
+        - clientId
+        - sum
+        - productName
+      properties:
+        clientId:
+          description: Идентификатор клиента
+          type: number
+          format: int64
+        sum:
+          description: Стоимость продукта/услуги
+          type: number
+          format: int32
+        productName:
+          description: Наименование продукта
+          type: string
+    CancelingParameters:
+      required:
+        - clientId
+        - productName
+      properties:
+        clientId:
+          description: Идентификатор клиента
+          type: number
+          format: int64
+        productName:
+          description: Наименование продукта
+          type: string
+    DepositParameters:
+      required:
+        - clientId
+        - sum
+      properties:
+        clientId:
+          description: Идентификатор клиента
+          type: number
+          format: int64
+        sum:
+          description: Стоимость продукта/услуги
+          type: number
+          format: int32
+    ProductContracts:
+      required:
+        - id
+        - name
+      properties:
+        productName:
+          description: Наименование продукта
+          type: string
+        clientName:
+          description: Имя клиента
+          type: string
+        numberOfContracts:
+          description: Кол-во покупок продукта/услуги
+          type: number
+          format: int32

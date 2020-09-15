@@ -37,6 +37,11 @@ INSERT INTO suppliers (name, sum) VALUES
 
 DROP TABLE IF EXISTS products;
 
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
 INSERT INTO products (name) VALUES
   ('Интернет'),
   ('Сотовая связь'),
